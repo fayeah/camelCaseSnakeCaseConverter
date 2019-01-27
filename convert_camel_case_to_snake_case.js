@@ -25,6 +25,22 @@ function getFiles(dir, files_) {
     return files_;
 }
 
+function changeToSnakeCase(camelCaseMethod) {
+    const camelCaseString = camelCaseMethod.substring(
+        camelCaseMethod.indexOf("void") + 4,
+        camelCaseMethod.indexOf("()")
+    ).trim();
+    const snakeCaseString = camelCaseString.split('').map((character) => {
+        if (/[A-Z]/.test(character)) {
+            return `_${character.toLowerCase()}`;
+        }
+        return character;
+    }).join('');
+
+    const snakeCaseMethod = camelCaseMethod.replace(camelCaseString, snakeCaseString);
+    return snakeCaseMethod;
+}
+
 function changeFileMethodName(file) {
     fs.readFile(file, 'utf8', function (err, data) {
         if (err) {
@@ -35,19 +51,7 @@ function changeFileMethodName(file) {
         }
         const result = data.split(testAnnotationString).map((method, index) => {
             if (index !== 0) {
-                const camelCaseString = method.substring(
-                    method.indexOf("void") + 4,
-                    method.indexOf("()")
-                ).trim();
-                const snakeCaseString = camelCaseString.split('').map((character) => {
-                    if (/[A-Z]/.test(character)) {
-                        return `_${character.toLowerCase()}`;
-                    }
-                    return character;
-                }).join('');
-
-                const snakeCaseMethod = method.replace(camelCaseString, snakeCaseString);
-                return snakeCaseMethod;
+                return changeToSnakeCase(method);
             }
             return method;
         }).join(testAnnotationString);
