@@ -1,12 +1,12 @@
-let testFolder = '';
+let testFolder = [];
 
 const fs = require('fs');
 
 const testAnnotationString = '@Test';
 
 process.argv.forEach(function (val, index, array) {
-    if (index === 2) {
-        testFolder = val;
+    if (index >= 2) {
+        testFolder.push(val);
     }
 });
 
@@ -58,6 +58,8 @@ function changeFileMethodName(file) {
     });
 }
 
-getFiles(testFolder);
+console.log('start converting');
+
+testFolder.forEach(getFiles);
 
 console.log('convert success!');
